@@ -15,12 +15,18 @@ public class BallController : MonoBehaviour
     public Vector2 swipePosCurrentFrame;
     public Vector2 currentSwipe;
 
+    private AudioSource playerAudio;
+    public AudioClip wallHitSound;
+    public ParticleSystem fireworksParticle;
+
     private Color solveColor;
 
     private void Start()
     {
+        fireworksParticle.Pause();
         solveColor = Random.ColorHSV(0.5f, 1);
         GetComponent<MeshRenderer>().material.color = solveColor;
+        playerAudio = GetComponent<AudioSource>();
     }
 
     private void FixedUpdate()
@@ -50,6 +56,7 @@ public class BallController : MonoBehaviour
                 isMoving = false;
                 moveDirection = Vector3.zero;
                 nextCollisionPosition = Vector3.zero;
+                playerAudio.PlayOneShot(wallHitSound);
             }
         }
 
@@ -82,7 +89,6 @@ public class BallController : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             swipePosCurrentFrame = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-            Debug.Log(swipePosCurrentFrame.ToString());
 
             if (swipePosCurrentFrame != Vector2.zero)
             {
@@ -110,8 +116,6 @@ public class BallController : MonoBehaviour
                     SetDestination(currentSwipe.x > 0 ? Vector3.right : Vector3.left);
                 }
 
-                //SetDestination(Mathf.Abs(y) > Mathf.Abs(x) ? y > 0 ? Vector3.forward : Vector3.back : x > 0 ? Vector3.right : Vector3.left);
-
                 swipePosLastFrame = swipePosCurrentFrame;
             }
         }
@@ -136,5 +140,12 @@ public class BallController : MonoBehaviour
         }
 
         isMoving = true;
+    }
+
+    public void PlayFireworks()
+    {
+        ParticleSystem.MainModule settings = fireworksParticle.main;
+        settings.startColor = new ParticleSystem.MinMaxGradient(Random.ColorHSV(0.5f, 1));
+        fireworksParticle.Play();
     }
 }

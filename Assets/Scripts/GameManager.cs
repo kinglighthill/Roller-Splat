@@ -7,7 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager singleton;
 
-    private GroundPieceController[] groundPieceControllers; 
+    private GroundPieceController[] groundPieceControllers;
+    private BallController ballController;
 
     // Start is called before the first frame update
     void Start()
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
     private void SetupNewLevel()
     {
         groundPieceControllers = FindObjectsOfType<GroundPieceController>();
+        ballController = FindObjectOfType<BallController>();
     }
 
     private void Awake()
@@ -64,13 +66,14 @@ public class GameManager : MonoBehaviour
 
         if (isFinished)
         {
-            NextLevel();
+            ballController.PlayFireworks();
+            Invoke("NextLevel", 1.5f);
         }
     }
 
     private void NextLevel()
     {
-        if (SceneManager.GetActiveScene().buildIndex == 1)
+        if (SceneManager.GetActiveScene().buildIndex == 9)
         {
             SceneManager.LoadScene(0);
         }
